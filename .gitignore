@@ -1,0 +1,53 @@
+# Dependencies
+/node_modules/
+
+# Production build
+/build/
+
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+/coverage/
+*.lcov
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Optional: if using storybook
+/out/
+
+# Optional: if using next.js
+/.next/
+/out/
+
+# Optional: if using parcel-bundler
+.cache/
+dist/
+
+# Optional: if using Vite
+/dist/
+
+# Optional: if using Mac
+*.swp
