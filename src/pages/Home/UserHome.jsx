@@ -7,7 +7,7 @@ import Sidebar from '../../components/SideBar/SideBar';
 import { fetchAllTasks, fetchProfile } from '../../api/todoWebApi';
 import { useNavigate } from 'react-router-dom';
 import AddTaskModal from '../../components/AddTaskModel/AddTaskModal';
-import { TaskContext, UserContext } from '../../contexts/TaskContext';
+import { TaskContext, UserContext } from '../../contexts/contexts';
 
 
 const UserHome = () => {

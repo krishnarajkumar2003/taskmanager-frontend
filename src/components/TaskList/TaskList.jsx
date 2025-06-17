@@ -3,7 +3,7 @@ import TaskItem from '../TaskItem/TaskItem';
 import style from '../../pages/Home/UserHome.module.css';
 import { deleteTask } from '../../api/todoWebApi';
 
-function TaskList({ tasks, setTasks }) {
+function    TaskList({ tasks, setTasks }) {
     async function deleteMyTask(taskId) {
         const response = await deleteTask(taskId);
         if (typeof response === "string") {

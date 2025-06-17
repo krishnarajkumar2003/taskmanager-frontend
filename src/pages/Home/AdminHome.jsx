@@ -5,7 +5,7 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import UserList from '../../components/UserList/UserList';
 import { useNavigate } from 'react-router-dom';
 import { fetchAllUsers, deleteUserById, fetchProfile } from '../../api/todoWebApi';
-import { UserContext } from '../../contexts/TaskContext';
+import { UserContext } from '../../contexts/contexts';
 const AdminHome = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [originalUsers, setOriginalUsers] = useState([]);

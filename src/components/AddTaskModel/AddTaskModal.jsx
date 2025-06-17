@@ -31,7 +31,6 @@ const AddTaskModal = ({ onClose, fetchUserTasks }) => {
         } else if (response === "server error") {
             alert("Something went wrong please try again later");
         } else {
-            console.log("AIYO")
         }
     };
 

@@ -1,54 +1,83 @@
 import { useContext, useState } from 'react';
-import styles from '../ProfileModal/ProfileModal.module.css'
-import { UserContext } from '../../contexts/TaskContext'; 
+import styles from '../ProfileModal/ProfileModal.module.css';
+import { UserContext } from '../../contexts/contexts';
 import { updateUserProfile } from '../../api/todoWebApi';
+import { useNavigate } from 'react-router-dom';
 
 const UserProfileModal = ({ onClose }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const { user, setUser, fetchCurrentUser } = useContext(UserContext)
+    const { user, setUser, fetchCurrentUser } = useContext(UserContext);
     const [email, setEmail] = useState(user.email || '');
     const [username, setName] = useState(user.username || '');
+    const [emailError, setEmailError] = useState('');
+    const [usernameError, setUsernameError] = useState('');
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!email.trim()) {
-            setEmail(user.email)
-        }
-        if (!username.trim()) {
-            setUser(user.username)
+        const trimmedEmail = email.trim();
+        const trimmedUsername = username.trim();
+
+        setEmailError('');
+        setUsernameError('');
+
+        const isEmailUnchanged = trimmedEmail === user.email;
+        const isUsernameUnchanged = trimmedUsername === user.username;
+
+        if (isEmailUnchanged && isUsernameUnchanged) {
+            alert("No changes detected in email or username.");
+            return;
         }
 
-        updateUser();
+        if (!trimmedEmail) {
+            setEmailError("Email cannot be empty.");
+            return;
+        }
+
+        if (!trimmedEmail.toLowerCase().endsWith("@gmail.com")) {
+            setEmailError("Only @gmail.com emails are allowed.");
+            return;
+        }
+
+        if (!trimmedUsername) {
+            setUsernameError("Username cannot be empty.");
+            return;
+        }
+
+        await updateUser(trimmedEmail, trimmedUsername);
     };
 
+    const updateUser = async (newEmail, newUsername) => {
+        const userUpdatePayload = { email: newEmail, username: newUsername };
 
-    async function updateUser() {
-        const userUpdatePayload = { email, username };
-        const response = await updateUserProfile(userUpdatePayload);
-        if (response === 'success') {
-            alert("User profile updated successfully")
-            onClose()
-            setIsEditing(false);
-            await fetchCurrentUser()
-        }
-        else if (response === 'session expired') {
-            alert("Session expired. Please re-login.");
-            navigate('/', { replace: true });
-        }
-        else if (response === 'bad request') {
-            alert("Email or username already exits")
-        } else if (response === 'server error') {
+        try {
+            const response = await updateUserProfile(userUpdatePayload);
+            console.log("RESPONSE :", response)
+            if (response === 'success email is updated') {
+                alert("User email is updated successfully, Please login again.");
+                navigate('/', { replace: true })
+            } else if (response === 'success') {
+                alert("User name is updated")
+                await fetchCurrentUser();
+            } else if (response === 'bad request') {
+                if (response.message.toLowerCase().includes("email")) {
+                    setEmailError(response.message);
+                } else if (response.message.toLowerCase().includes("username")) {
+                    setUsernameError(response.message);
+                } else {
+                    alert(response.message);
+                }
+            } else if (response === 'session expired') {
+                alert("Session expired. Please re-login.");
+                navigate('/', { replace: true });
+            } else {
+                alert("Unexpected error occurred. please re-login");
+            }
+        } catch (error) {
             alert("Something went wrong. Please try again later.");
-        } else if (response.statusCode === 400) {
-            alert(response.message);
-        } else if (response.statusCode === 200) {
-            setUser(response.data);
-            onClose();
-        } else {
-            alert("Unexpected error occurred.");
         }
-    }
+    };
 
     return (
         <div className={styles.modalBackdrop}>
@@ -61,16 +90,26 @@ const UserProfileModal = ({ onClose }) => {
                         <input
                             type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setEmailError('');
+                            }}
                             className={styles.input}
                         />
+                        {emailError && <p style={{ color: "red" }}>{emailError}</p>}
+
                         <label>Name</label>
                         <input
                             type="text"
                             value={username}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => {
+                                setName(e.target.value);
+                                setUsernameError('');
+                            }}
                             className={styles.input}
                         />
+                        {usernameError && <p style={{ color: "red" }}>{usernameError}</p>}
+
                         <div className={styles.buttonGroup}>
                             <button type="submit" className={styles.saveBtn}>Save</button>
                             <button type="button" className={styles.cancelBtn} onClick={() => setIsEditing(false)}>Cancel</button>

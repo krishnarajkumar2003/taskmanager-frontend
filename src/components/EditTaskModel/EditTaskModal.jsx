@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import ReactDOM from 'react-dom';
 import style from '../../pages/Home/UserHome.module.css';
 import { updateTask } from '../../api/todoWebApi';
-import { TaskContext } from '../../contexts/TaskContext'; 
+import { TaskContext } from '../../contexts/contexts'; 
 import { useNavigate } from 'react-router-dom';
 
 const EditTaskModal = ({ task, onClose }) => {

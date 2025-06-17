@@ -23,7 +23,7 @@ const TaskItem = ({ task, deleteMyTask }) => {
                 </div>
 
                 <div className={style.icons}>
-                    {task.status !== 'MISSED' && task.status !== "COMPLETED" && (
+                    {task.status !== "COMPLETED" && (
                         <FaEdit className={style.editIcon} onClick={() => setShowModal(true)} />
                     )}
                     <FaTrash onClick={() => deleteMyTask(task.id)} className={style.trashIcon} />

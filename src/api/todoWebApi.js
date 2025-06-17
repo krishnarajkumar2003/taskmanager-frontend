@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:8080/api';
 
-export const loginUser = async (credentials) => {
+export const loginUser = async (credentials) => { // Log in API
     try {
         const response = await fetch(`${BASE_URL}/auth/login`, {
             method: 'POST',
@@ -30,7 +30,7 @@ export const loginUser = async (credentials) => {
 };
 
 
-export const registerUser = async (credentials) => {
+export const registerUser = async (credentials) => { // Sign up API
     try {
         const response = await fetch(`${BASE_URL}/auth/register`, {
             method: 'POST',
@@ -60,7 +60,7 @@ export const registerUser = async (credentials) => {
 };
 
 
-export const fetchAllTasks = async () => {
+export const fetchAllTasks = async () => { // Get all tasks API
     try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${BASE_URL}/todo/user/tasks/task`, {
@@ -91,7 +91,7 @@ export const fetchAllTasks = async () => {
 };
 
 
-export const addTask = async (task) => {
+export const addTask = async (task) => { // Add task API
     try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${BASE_URL}/todo/user/tasks/task`, {
@@ -123,7 +123,7 @@ export const addTask = async (task) => {
 };
 
 
-export const updateTask = async (task, taskId) => {
+export const updateTask = async (task, taskId) => { // Update task API
     try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${BASE_URL}/todo/user/tasks/task/${taskId}`, {
@@ -155,7 +155,7 @@ export const updateTask = async (task, taskId) => {
 };
 
 
-export const deleteTask = async (taskId) => {
+export const deleteTask = async (taskId) => { // Delete task API
     try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${BASE_URL}/todo/user/tasks/task/${taskId}`, {
@@ -188,9 +188,10 @@ export const deleteTask = async (taskId) => {
 };
 
 
-export const fetchProfile = async () => {
+export const fetchProfile = async () => { // Fetch user profile API
     try {
         const token = localStorage.getItem("token");
+        console.log("TOKEN in fetch user:", token)
         const response = await fetch(`${BASE_URL}/user/user-profile`, {
             method: 'GET',
             headers: {
@@ -198,7 +199,7 @@ export const fetchProfile = async () => {
                 "Content-Type": "application/json",
             }
         });
-
+        console.log("GETTING USER PROFILE:", response.status)
         if (response.status === 401) return "session expired";
         if (response.status === 403) return "forbidden";
 
@@ -218,7 +219,7 @@ export const fetchProfile = async () => {
 };
 
 
-export const updateUserProfile = async (user) => {
+export const updateUserProfile = async (user) => { // Update user profile API
     try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${BASE_URL}/user/update-user-profile`, {
@@ -229,14 +230,18 @@ export const updateUserProfile = async (user) => {
             },
             body: JSON.stringify(user)
         });
+        console.log("PROFILE STATUS:", response.status)
+        console.log("TOKEN in UPDATE user:", token)
         if (response.status === 400) return "bad request"
-            if (response.status === 401) return "session expired";
+        if (response.status === 401) return "session expired";
         if (response.status === 403) return "forbidden";
 
         const jsonData = await response.json();
 
         if (jsonData.statusCode === 200) {
-            return 'success';
+            if (jsonData.message === 'User email is updated')
+                return 'success email is updated';
+            return 'success'
         } else if (jsonData.statusCode === 500) {
             return "server error";
         } else {
@@ -249,7 +254,7 @@ export const updateUserProfile = async (user) => {
 };
 
 
-export const fetchAllUsers = async () => {
+export const fetchAllUsers = async () => { // Fetch all user API
     try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${BASE_URL}/admin/users`, {
@@ -280,7 +285,7 @@ export const fetchAllUsers = async () => {
 };
 
 
-export const deleteUserById = async (userId) => {
+export const deleteUserById = async (userId) => { // Delete user by user id
     try {
         const token = localStorage.getItem("token");
         const response = await fetch(`${BASE_URL}/admin/users/${userId}`, {
