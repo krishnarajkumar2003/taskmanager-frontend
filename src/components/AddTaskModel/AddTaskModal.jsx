@@ -8,13 +8,11 @@ const AddTaskModal = ({ user, onClose, fetchUserTasks }) => {
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('WORK');
     const [priority, setPriority] = useState('LOW');
-    const [status, setStatus] = useState('PENDING');
     const [dueDate, setDueDate] = useState('');
     const [userId] = useState(user.id); // assignedTo = current user
 
     const categories = ['WORK', 'PERSONAL', 'OTHERS'];
     const priorities = ['LOW', 'MEDIUM', 'HIGH'];
-    const statuses = ['PENDING', 'IN PROGRESS', 'COMPLETED'];
 
     const navigate = useNavigate();
 
@@ -43,7 +41,6 @@ const AddTaskModal = ({ user, onClose, fetchUserTasks }) => {
             description,
             category,
             priority,
-            status: finalStatus,
             dueDate,
             assignedTo: userId
         };
@@ -120,7 +117,7 @@ const AddTaskModal = ({ user, onClose, fetchUserTasks }) => {
                         ))}
                     </select>
 
-                    <label>Status</label>
+                    {/* <label>Status</label>
                     <select
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
@@ -129,7 +126,7 @@ const AddTaskModal = ({ user, onClose, fetchUserTasks }) => {
                         {statuses.map(s => (
                             <option key={s} value={s}>{s}</option>
                         ))}
-                    </select>
+                    </select> */}
 
                     <div className={styles.buttonGroup}>
                         <button type='submit' className={styles.addBtn}>Add Task</button>

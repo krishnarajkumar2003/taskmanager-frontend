@@ -12,8 +12,7 @@ RUN npm install
 COPY . .
 
 # Set environment variabl(optional)
-ENV PORT=8090
-
+ENV PORT=8050
 # Expose the port React will run on
 Expose 8090
 
