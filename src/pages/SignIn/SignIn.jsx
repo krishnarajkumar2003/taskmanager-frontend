@@ -1,8 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import style from '../AuthPage/AuthPage.module.css';
-import { loginUser } from '../../api/todoWebApi';
+import { loginUser, fetchProfile } from '../../api/todoWebApi'
 import { useNavigate } from 'react-router-dom';
-
 function SignIn({ setIsLogInSelected }) {
     const navigate = useNavigate();
     const [emailError, setEmailError] = useState("");
@@ -68,11 +67,14 @@ function SignIn({ setIsLogInSelected }) {
 
     async function handleLogin(email, password) {
         try {
+
             setIsSubmitting(true); // Set this before API call
             const loginData = { email, password };
             setIsLogInSelected(true);
 
             const result = await loginUser(loginData);
+
+            console.log("LOG RES:", result)
 
             if (typeof result === "string") {
                 switch (result) {
@@ -91,16 +93,42 @@ function SignIn({ setIsLogInSelected }) {
                 return;
             }
 
-            if (result?.statusCode === 200) {
+            if (result?.statusCode === 200 && result?.data !== null) {
                 localStorage.setItem("token", result.data);
                 console.log("Token stored:", localStorage.getItem("token"));
 
-                const lastWord = result.message.split(" ").pop().toUpperCase();
-                if (lastWord === "ROLE_USER") {
-                    navigate("/user/home", { replace: true });
-                } else {
-                    navigate("/admin/home", { replace: true });
+
+                const response = await fetchProfile();
+
+                console.log("LOGGING RESPONSE:", response)
+
+
+                if (response === 'session expired') {
+                    alert("Your account is in waiting list for approval. Please login after approval")
+                    return;
                 }
+                else if (response === 'forbidden') {
+                    alert("Access forbidden. Please login with proper credentials.");
+                    navigate('/', { replace: true });
+                }
+                else if (response === 'bad request') {
+                    alert("Bad request. Please try again.");
+                }
+                else if (response === 'server error') {
+                    alert("Server error. Please try again later.");
+                }
+
+                if (response.statusCode === 200 && response.data.accountStatus === "APPROVED") {
+                    if (response.data.role === "ROLE_USER") {
+                        console.log("Here not problem")
+                        navigate('/user/home', { replace: true })
+                    } else if (response.data.role === "ROLE_ADMIN") {
+                        navigate("/admin/home", { replace: true });
+                    }
+                }
+
+            } else if (result?.data === null) {
+                alert("Your account is in waiting list for approval. Please login after approval")
             } else {
                 alert("Unexpected response. Please try again.");
             }

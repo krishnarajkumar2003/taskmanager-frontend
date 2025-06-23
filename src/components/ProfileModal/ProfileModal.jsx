@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react';
 import styles from '../ProfileModal/ProfileModal.module.css';
 import { UserContext } from '../../contexts/contexts';
-import { updateUserProfile } from '../../api/todoWebApi';
+import { updateUserProfile } from '../../api/todoWebApi'
 import { useNavigate } from 'react-router-dom';
 
 const UserProfileModal = ({ onClose }) => {

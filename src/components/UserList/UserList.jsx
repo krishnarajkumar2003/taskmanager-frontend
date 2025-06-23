@@ -2,21 +2,21 @@ import manImg from '../../assets/man.png';
 import style from '../../pages/Home/UserHome.module.css';
 import UserItem from '../UserItem/UserItem';
 
-function UserList({ users, onDelete }) {
+function UserList({ fetchApprovedUsers, users, onDelete }) {
     return (
-        <div className={style.taskList}>
-            {
-                users.length > 0 ? (
-                    users.map((user) => (
-                        <UserItem key={user.id} user={user} onDelete={onDelete} />
-                    ))
-                ) : (
-                    <>
-                        <img src={manImg} alt="No users found" className={style.noTaskFound} />
-                        <p className={style.noTaskFound} style={{ color: 'white' }}>No users found</p>
-                    </>
-                )
-            }
+        <div>
+            {users.length === 0 ? (
+                <div style={{ textAlign: 'center', marginTop: '2rem', color: '#666' }}>
+                    <img src={manImg} alt="No task found" className={style.noTaskFound} />
+                    <p style={{ color: 'white' }}>No users found</p>
+                </div>
+            ) : (
+                <div className={style.taskList}>
+                    {users.map(user => (
+                        <UserItem key={user.id} user={user} fetchApprovedUsers={fetchApprovedUsers} onDelete={onDelete} />
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

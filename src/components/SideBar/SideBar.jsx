@@ -1,27 +1,34 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import style from '../../pages/Home/UserHome.module.css';
 import { FaBars, FaTimes } from "react-icons/fa";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../../contexts/contexts";
 import UserProfileModal from "../ProfileModal/ProfileModal";
 
 function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const [showProfileModal, setShowProfileModal] = useState(false);
-    const location = useLocation();
+    const { currentUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleHomeClick = () => {
-        if (location.pathname === '/user/home') {
-            window.location.reload();
+        if (currentUser === "ROLE_ADMIN") {
+            navigate("/admin/home");
+        } else if (currentUser === "ROLE_USER") {
+            navigate("/user/home");
+        } else {
+            alert("User role not recognized. Logging out.");
+            localStorage.removeItem("token");
+            navigate("/", { replace: true });
         }
+        setIsOpen(false);
     };
 
     const handleLogout = () => {
         localStorage.removeItem("token");
-        setIsOpen(false)
-        alert("Logged out successfully")
+        setIsOpen(false);
+        alert("Logged out successfully");
         navigate("/", { replace: true });
-
     };
 
     return (
@@ -39,15 +46,31 @@ function Sidebar() {
                     <ul>
                         <li onClick={handleHomeClick}>🏠 Home</li>
                         <li onClick={() => setShowProfileModal(true)}>👤 Profile</li>
+
+                        {/* My Created Tasks - visible to all roles
+                        <li onClick={() => { navigate('/user/home/viewUsers', { replace: true }); setIsOpen(false); }}>📝 My Created Tasks</li> */}
+
+                        {/* Admin-specific option */}
+                        {currentUser === "ROLE_ADMIN" && (
+                            <li onClick={() => { navigate('/admin/home/waitinglist'); setIsOpen(false); }}>
+                                📃 View Waiting List
+                            </li>
+                        )}
+
+                        {/* User-specific option */}
+                        {currentUser === "ROLE_USER" && (
+                            <li onClick={() => { navigate('/user/home/viewUsers'); setIsOpen(false); }}>
+                                👥 View Users
+                            </li>
+                        )}
+
                         <li onClick={handleLogout}>🚪 Logout</li>
                     </ul>
                 </div>
             </div>
 
             {showProfileModal && (
-                <UserProfileModal
-                    onClose={() => setShowProfileModal(false)}
-                />
+                <UserProfileModal onClose={() => setShowProfileModal(false)} />
             )}
         </>
     );

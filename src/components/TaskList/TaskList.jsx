@@ -1,9 +1,9 @@
 import manImg from '../../assets/man.png';
 import TaskItem from '../TaskItem/TaskItem';
 import style from '../../pages/Home/UserHome.module.css';
-import { deleteTask } from '../../api/todoWebApi';
-
-function    TaskList({ tasks, setTasks }) {
+import { deleteTask } from '../../api/todoWebApi'
+function TaskList({ tasks, setTasks, user }) {
+    console.log("TASKLIST USER:", user)
     async function deleteMyTask(taskId) {
         const response = await deleteTask(taskId);
         if (typeof response === "string") {
@@ -19,11 +19,14 @@ function    TaskList({ tasks, setTasks }) {
     return (<>< div className={style.taskList} >
         {
             tasks.length > 0 ? (
-                tasks.map((task) => <TaskItem deleteMyTask={deleteMyTask} key={task.id} task={task} />)
+                tasks.map((task) => <TaskItem deleteMyTask={deleteMyTask} key={task.id} task={task} user={user} />)
             ) : (
                 <>
-                    <img src={manImg} alt="No task found" className={style.noTaskFound} />
-                    <p className={style.noTaskFound} style={{ color: 'white' }}>No task found</p>
+                    <div className={style.noTaskContainer}>
+                        <img src={manImg} alt="No task found" className={style.noTaskFound} />
+                        <p className={style.noTaskFound} style={{ color: 'white' }}>No task found</p>
+                    </div>
+
                 </>
             )
         }

@@ -22,61 +22,6 @@
 }
 
 
-.sidebarContainer {
-    position: absolute;
-    top: 0;
-    left: -300px;
-    width: 280px;
-    height: 100%;
-    min-height: 100vh;
-    background-color: #12132e;
-    color: white;
-    transition: left 0.3s ease;
-    padding: 30px 25px;
-    overflow: hidden;
-    z-index: 200;
-}
-
-.sidebarContainer.active {
-    left: 0;
-}
-
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 80px;
-}
-
-.sidebar ul li {
-    margin: 25px 0;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 1.3rem;
-    transition: color 0.3s;
-}
-
-.sidebar ul li:hover {
-    color: #61dafb;
-}
-
-.toggleBtn {
-    position: absolute;
-    top: 25px;
-    left: 25px;
-    z-index: 300;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    color: white;
-    cursor: pointer;
-}
-
 .content {
     flex-grow: 1;
     display: flex;
@@ -113,6 +58,31 @@
     color: #888;
 }
 
+.filterBarWithButton {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 50px;
+    /* Adjust padding as needed */
+    /* keep your red background */
+}
+
+.filters {
+    display: flex;
+    gap: 20px;
+    /* spacing between filters */
+    flex-wrap: wrap;
+    /* optional: allow wrapping on small screens */
+}
+
+.rightControls {
+    display: flex;
+    gap: 10px;
+    /* spacing between date input and button */
+    align-items: center;
+}
+
+
 .filterWrapper {
     display: flex;
     gap: 20px;
@@ -131,6 +101,16 @@
     color: #333;
     cursor: pointer;
     transition: border-color 0.3s ease;
+}
+
+.dateInput {
+    margin-left: 1rem;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+    color: black;
 }
 
 .filterSelect:hover,
@@ -335,6 +315,13 @@
     color: inherit;
 }
 
+.taskDescription {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: inherit;
+}
+
 .dueDate {
     font-size: 1.1rem;
     color: #ccc;
@@ -385,14 +372,20 @@
     border-radius: 16px;
     width: 90%;
     max-width: 400px;
+    max-height: 700px;
+    overflow-y: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     position: relative;
     color: white;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-
 }
+
+.modalContent::-webkit-scrollbar {
+    background-color: transparent;
+}
+
 
 .modalContent h2 {
     text-align: center;
@@ -413,7 +406,6 @@
 }
 
 .input,
-.textarea,
 .select {
     padding: 0.7rem;
     border: none;
@@ -523,10 +515,109 @@ button:first-child {
     color: white;
 }
 
+.noTaskContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    /* You can increase this to 80vh or 100vh if needed */
+    text-align: center;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.noTaskFound {
+    max-width: 180px;
+    width: 100%;
+    font-size: 1rem;
+    color: #ccc;
+}
+
+
+/* -------- Empty State -------- */
+.noTaskFound {
+    margin: 0 auto;
+    max-width: 200px;
+    font-size: 1.1rem;
+    text-align: center;
+}
 
 @keyframes spin {
 
     100% {
         transform: rotate(360deg);
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.sidebarContainer {
+    position: absolute;
+    top: 0;
+    left: -300px;
+    width: 280px;
+    height: 100%;
+    min-height: 100vh;
+    background-color: #12132e;
+    color: white;
+    transition: left 0.3s ease;
+    padding: 30px 25px;
+    overflow: hidden;
+    z-index: 200;
+}
+
+.sidebarContainer.active {
+    left: 0;
+}
+
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 80px;
+}
+
+.sidebar ul li {
+    margin: 25px 0;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.3rem;
+    transition: color 0.3s;
+}
+
+.sidebar ul li:hover {
+    color: #61dafb;
+}
+
+.toggleBtn {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    z-index: 300;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
 }

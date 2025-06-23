@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import style from '../AuthPage/AuthPage.module.css';
-import { registerUser } from '../../api/todoWebApi';
+import { registerUser } from '../../api/todoWebApi'
 function SignUp({ setIsLogInSelected }) {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
@@ -98,7 +98,7 @@ function SignUp({ setIsLogInSelected }) {
                 emailRef.current.value = '';
                 usernameRef.current.value = '';
                 passwordRef.current.value = '';
-                alert("Account registered successfully. Please sign in")
+                alert("Account registered successfully. Awaiting admin approval.")
             } else {
                 alert("Unexpected error. Please try again.");
             }

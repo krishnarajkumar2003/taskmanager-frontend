@@ -1,4 +1,4 @@
-import { createContext, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './UserHome.module.css';
 import FilterBar from '../../components/FilterBar/FilterBar';
 import SearchBar from '../../components/SearchBar/SearchBar';
@@ -9,12 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import AddTaskModal from '../../components/AddTaskModel/AddTaskModal';
 import { TaskContext, UserContext } from '../../contexts/contexts';
 
-
 const UserHome = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedPriority, setSelectedPriority] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
+    const [selectedDate, setSelectedDate] = useState('');
     const [originalTasks, setTasks] = useState([]);
+    const [currentUser, setCurrentUserRole] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [user, setUser] = useState(null);
@@ -41,13 +42,13 @@ const UserHome = () => {
 
     async function fetchCurrentUser() {
         const response = await fetchProfile();
-
         if (response === 'forbidden') {
             alert("Access forbidden. Please login with proper credentials.");
             navigate('/', { replace: true });
         } else if (response.statusCode === 200) {
-            const { email, username } = response.data;
-            setUser({ email, username });
+            const { id, email, username } = response.data;
+            setUser({ id, email, username });
+            setCurrentUserRole(() => response.data.role);
         } else if (response === 'bad request') {
             alert("Bad request. Please try again.");
         } else if (response === 'server error') {
@@ -85,16 +86,19 @@ const UserHome = () => {
     }
 
     const filteredTasks = useMemo(() => {
-        return originalTasks.filter((task) =>
-            task.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-            (selectedPriority ? task.priority === selectedPriority : true) &&
-            (selectedStatus ? task.status === selectedStatus : true)
-        );
-    }, [originalTasks, searchTerm, selectedPriority, selectedStatus]);
+        return originalTasks.filter((task) => {
+            const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesPriority = selectedPriority ? task.priority === selectedPriority : true;
+            const matchesStatus = selectedStatus ? task.status === selectedStatus : true;
+            const matchesDate = selectedDate ? task.dueDate === selectedDate : true;
+
+            return matchesSearch && matchesPriority && matchesStatus && matchesDate;
+        });
+    }, [originalTasks, searchTerm, selectedPriority, selectedStatus, selectedDate]);
 
     return (
         <div className={styles.home}>
-            <UserContext.Provider value={{ user, setUser, fetchCurrentUser }}>
+            <UserContext.Provider value={{ user, setUser, fetchCurrentUser, currentUser }}>
                 <Sidebar />
             </UserContext.Provider>
 
@@ -102,13 +106,34 @@ const UserHome = () => {
                 <div className={styles.usernameContainer}>
                     {user?.username && <span>👋 Welcome, {user.username}</span>}
                 </div>
+
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-                <FilterBar
-                    selectedPriority={selectedPriority}
-                    setSelectedPriority={setSelectedPriority}
-                    selectedStatus={selectedStatus}
-                    setSelectedStatus={setSelectedStatus}
-                />
+
+                <div className={styles.filterBarWithButton}>
+                    <div className={styles.filters}>
+                        <FilterBar
+                            selectedPriority={selectedPriority}
+                            setSelectedPriority={setSelectedPriority}
+                            selectedStatus={selectedStatus}
+                            setSelectedStatus={setSelectedStatus}
+                        />
+                    </div>
+                    <div className={styles.rightControls}>
+                        <input
+                            type="date"
+                            className={styles.dateInput}
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                        />
+                        <button
+                            className={styles.addTaskBtnInline}
+                            onClick={() => setIsModalOpen(true)}
+                        >
+                            + Add Task
+                        </button>
+                    </div>
+                </div>
+
 
                 {isLoading ? (
                     <div className={styles.loaderContainer}>
@@ -116,19 +141,16 @@ const UserHome = () => {
                     </div>
                 ) : (
                     <TaskContext.Provider value={{ fetchUserTasks }}>
-                        <TaskList tasks={filteredTasks} setTasks={setTasks} />
+                        <TaskList tasks={filteredTasks} setTasks={setTasks} user={user} />
                     </TaskContext.Provider>
                 )}
             </div>
-
-            <button className={styles.addTaskBtn} onClick={() => setIsModalOpen(true)}>
-                +
-            </button>
 
             {isModalOpen && (
                 <AddTaskModal
                     onClose={() => setIsModalOpen(false)}
                     fetchUserTasks={fetchUserTasks}
+                    user={user}
                 />
             )}
         </div>
